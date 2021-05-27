@@ -106,4 +106,5 @@ client.on('message', msg => {
 //         }
 //     }
 // });
+//Outdated file token for safety purposes!
 client.login('NzgxMjA3MzI5OTI3OTg3MjMx.X76SBQ.4UUD5QUr2yWlWyjT6wbwfEond1I')
