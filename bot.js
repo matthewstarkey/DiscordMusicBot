@@ -20,7 +20,7 @@ let songQueue = [];
 currentlyPlaying = false;
 currentSong = "Nothing";
 //IM OUT - plays link when bot leaves
-let link = 'https://www.youtube.com/watch?v=8iUFEMEySNc';
+const link = 'https://www.youtube.com/watch?v=8iUFEMEySNc';
 
 client.on('message', async (message) => {
     if (!message.content.startsWith(prefix) || message.author.bot) { return; }
