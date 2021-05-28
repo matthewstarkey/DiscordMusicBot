@@ -12,8 +12,6 @@ const ytSearch = require('yt-search');
 //Spotify requests:
 playlistURL = 'https://api.spotify.com/v1/playlists/';
 spotifyRequest = 'https://accounts.spotify.com/authorize';
-clientID = '427024547a9b4a218ae7988760211f8f';
-clientSecret = '4782656788ba4286a09d666f809cbce5';
 
 //used to keep track of songs, and whether bot is currently playing a song
 let songQueue = [];
