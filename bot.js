@@ -17,8 +17,8 @@ clientSecret = '4782656788ba4286a09d666f809cbce5';
 
 //used to keep track of songs, and whether bot is currently playing a song
 let songQueue = [];
-currentlyPlaying = false;
-currentSong = "Nothing";
+let currentlyPlaying = false;
+let currentSong = "Nothing";
 //IM OUT - plays link when bot leaves
 const link = 'https://www.youtube.com/watch?v=8iUFEMEySNc';
 
