@@ -10,8 +10,15 @@ const ytdl = require('ytdl-core');
 const ytSearch = require('yt-search');
 
 //Spotify requests:
-playlistURL = 'https://api.spotify.com/v1/playlists/';
-spotifyRequest = 'https://accounts.spotify.com/authorize';
+//EXCLUDED clientID and clientSecret to protect my bot's data
+const { SpotifyParser } = require('spotilink');
+const node = {
+    host: 'localhost',
+    port: 8080,
+    password: 'password'
+};
+
+const spotilink = new SpotifyParser(node, clientID, clientSecret);
 
 //used to keep track of songs, and whether bot is currently playing a song
 let songQueue = [];
@@ -30,16 +37,46 @@ client.on('message', async (message) => {
     if (!voiceChannel) { return message.channel.send(message.author.username + ", you need to be in a voice channel") }
     const search = args.join(" ");
     const connection = await voiceChannel.join();
-
+    
+    if(command == 'prefix') {
+        prefix = search;
+        return;
+    }
+    if(command == 'help') {
+        let help = '!ping - Dont dare ping me \n!play [SONG_NAME] - plays a track from youtube \n!playlist [PLAYLIST_LINK] - plays a spotify playlist\n';
+        help += '!stop - stops me from playing music, empties the queue \n!skip - skips current track \n!shuffle - shuffles current queue \n!q / !queue - displays current queue \n';
+        help += '!prefix [PREFIX] - sets prefix for commands, default is !';
+        return message.channel.send(help);
+    }
+    
+    //plays spotify playlist
+    if(command == 'playlist') {
+        let spotifyID = '';
+        //gets spotify playlist ID
+        if(search.startsWith('https://open.spotify')) {
+            let searchSplit = search.split('/');
+            spotifyID = searchSplit[4].split('?')[0];
+        } else {
+            return message.channel.send("Please enter a valid spotify playlist link");
+        }
+        //gets playlist array
+        let playlist = await spotilink.getPlaylistTracks(spotifyID);
+        //Queues songs from playlist
+        message.channel.send('***Queueing Playlist***');
+        for(let i = 0; i < playlist.length; i++) {
+            //gathers tracks name and artists name
+            let searchString = '' + playlist[i].name + ' ' + playlist[i].artists[0].name;
+            let video = await videoFinder(searchString);
+            if(video) {
+                songQueue.push(video);
+            }
+        }
+        playNextSong(connection,message,voiceChannel);
+    }
+    
     if (command == 'play') {
         if (!args.length) { return message.channel.send('type !play [NAME_OF_SONG]') }
-
-        //searches youtube for video
-        const videoFinder = async (query) => {
-            const videoResult = await ytSearch(query);
-            //returns top result. if no results return null
-            return (videoResult.videos.length > 1) ? videoResult.videos[0] : null;
-        }
+        
         if(search.startsWith('https://open.spotify')) {
             let searchSplit = search.split('/');
             console.log(searchSplit);
@@ -130,3 +167,10 @@ function shuffleArray(array,message) {
     }
     message.channel.send('***Shuffled Queue***');
 }
+
+//searches youtube for video
+        const videoFinder = async (query) => {
+            const videoResult = await ytSearch(query);
+            //returns top result. if no results return null
+            return (videoResult.videos.length > 1) ? videoResult.videos[0] : null;
+        }
